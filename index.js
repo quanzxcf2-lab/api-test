@@ -4,7 +4,7 @@ const Canvas = require("@napi-rs/canvas");
 const app = express();
 
 app.get("/", (req, res) => {
-  res.send("Capy Shop API Online");
+  res.send("🦫 Capy Shop API Online");
 });
 
 app.get("/welcome", async (req, res) => {
@@ -15,31 +15,41 @@ app.get("/welcome", async (req, res) => {
       return res.status(400).send("Missing avatar parameter");
     }
 
-    const username = req.query.username || "Member";
+    const username = decodeURIComponent(req.query.username || "Member");
     const count = req.query.count || "0";
 
     const canvas = Canvas.createCanvas(1200, 500);
     const ctx = canvas.getContext("2d");
 
-    // Background
-    ctx.fillStyle = "#2F3E2F";
+    // ===== CAPYBARA BACKGROUND =====
+    const background = await Canvas.loadImage(
+      "https://cdn.discordapp.com/attachments/1344720407953150004/1516820432362279014/4VnTvTyyb65ft28t6TszhEqYAzGHAi6OIi3SggSx.jpg"
+    );
+
+    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+
+    // Overlay tối
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Overlay
-    ctx.fillStyle = "rgba(0,0,0,0.4)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Card
-    ctx.fillStyle = "#1e1f22";
+    // ===== CARD =====
+    ctx.fillStyle = "rgba(30,31,34,0.88)";
     ctx.fillRect(40, 40, 1120, 420);
 
     ctx.strokeStyle = "#8DDC65";
-    ctx.lineWidth = 5;
+    ctx.lineWidth = 6;
     ctx.strokeRect(40, 40, 1120, 420);
 
-    // Avatar
+    // ===== AVATAR =====
     const avatar = await Canvas.loadImage(avatarURL);
 
+    // Vòng phát sáng
+    ctx.beginPath();
+    ctx.arc(180, 250, 115, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(141,220,101,0.25)";
+    ctx.fill();
+
+    // Avatar tròn
     ctx.save();
     ctx.beginPath();
     ctx.arc(180, 250, 100, 0, Math.PI * 2);
@@ -50,35 +60,61 @@ app.get("/welcome", async (req, res) => {
 
     ctx.restore();
 
-    // Avatar Border
+    // Viền avatar
     ctx.beginPath();
     ctx.arc(180, 250, 105, 0, Math.PI * 2);
     ctx.strokeStyle = "#8DDC65";
     ctx.lineWidth = 5;
     ctx.stroke();
 
-    // Text
+    // ===== LOGO =====
     ctx.fillStyle = "#8DDC65";
-    ctx.font = "bold 55px Sans";
-    ctx.fillText("CAPY SHOP", 340, 120);
+    ctx.font = "bold 58px Sans";
+    ctx.fillText("🦫 CAPY SHOP", 340, 110);
+
+    // ===== WELCOME =====
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 52px Sans";
+    ctx.fillText("WELCOME!", 340, 180);
+
+    // ===== USERNAME =====
+    let displayName = username;
+
+    if (displayName.length > 24) {
+      displayName = displayName.slice(0, 24) + "...";
+    }
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 48px Sans";
-    ctx.fillText("WELCOME!", 340, 190);
+    ctx.font = "bold 42px Sans";
+    ctx.fillText(displayName, 340, 260);
 
-    ctx.font = "bold 40px Sans";
-    ctx.fillText(username, 340, 270);
-
+    // ===== MEMBER COUNT =====
     ctx.fillStyle = "#8DDC65";
-    ctx.font = "32px Sans";
-    ctx.fillText("Member #" + count, 340, 330);
+    ctx.font = "bold 34px Sans";
+    ctx.fillText("Member #" + count, 340, 320);
 
+    // ===== DESCRIPTION =====
     ctx.fillStyle = "#ffffff";
     ctx.font = "26px Sans";
     ctx.fillText(
       "Cam on ban da tham gia cong dong Capy Shop!",
       340,
-      400
+      390
+    );
+
+    ctx.fillText(
+      "Nhanh chong • Uy tin • Chuyen nghiep",
+      340,
+      430
+    );
+
+    // ===== FOOTER =====
+    ctx.fillStyle = "#8DDC65";
+    ctx.font = "20px Sans";
+    ctx.fillText(
+      "Powered by Capy Shop",
+      50,
+      485
     );
 
     const buffer = canvas.toBuffer("image/png");
@@ -95,5 +131,5 @@ app.get("/welcome", async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+  console.log("🦫 Server running on port " + PORT);
 }); 
