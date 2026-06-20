@@ -23,7 +23,7 @@ app.get("/welcome", async (req, res) => {
 
     // ===== CAPYBARA BACKGROUND =====
     const background = await Canvas.loadImage(
-      "https://www.canva.com/templates/EAGxJmQfeTk-brown-and-blue-cute-illustrative-watercolor-linktree-background/"
+      "https://www.canva.com/design?create&type=TAEaHbt_Ey0&template=EAGxJmQfeTk&category=tAEbg6offlk&analyticsCorrelationId=8f643929-be57-4ad4-8aab-2b287d1bcaa9"
     );
 
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
