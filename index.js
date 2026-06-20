@@ -23,7 +23,7 @@ app.get("/welcome", async (req, res) => {
 
     // ===== CAPYBARA BACKGROUND =====
     const background = await Canvas.loadImage(
-      "https://www.canva.com/design?create&type=TAEaHbt_Ey0&template=EAGxJmQfeTk&category=tAEbg6offlk&analyticsCorrelationId=8f643929-be57-4ad4-8aab-2b287d1bcaa9"
+      "https://raw.githubusercontent.com/rafaballerini/capybara-wallpapers/main/pastel-capybara-1.png"
     );
 
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
