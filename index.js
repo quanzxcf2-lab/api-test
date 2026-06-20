@@ -21,12 +21,17 @@ app.get("/welcome", async (req, res) => {
     const canvas = Canvas.createCanvas(1200, 500);
     const ctx = canvas.getContext("2d");
 
-    // ===== CAPYBARA BACKGROUND =====
-    const background = await Canvas.loadImage(
-  "https://raw.githubusercontent.com/rafaballerini/capybara-wallpapers/main/pastel-capybara-1.png"
-);
+    // ===== BACKGROUND =====
+    try {
+      const background = await Canvas.loadImage(
+        "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=1200&q=80"
+      );
 
-    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+    } catch {
+      ctx.fillStyle = "#5E4A36";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
 
     // Overlay tối
     ctx.fillStyle = "rgba(0,0,0,0.55)";
@@ -43,13 +48,11 @@ app.get("/welcome", async (req, res) => {
     // ===== AVATAR =====
     const avatar = await Canvas.loadImage(avatarURL);
 
-    // Vòng phát sáng
     ctx.beginPath();
     ctx.arc(180, 250, 115, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(141,220,101,0.25)";
     ctx.fill();
 
-    // Avatar tròn
     ctx.save();
     ctx.beginPath();
     ctx.arc(180, 250, 100, 0, Math.PI * 2);
@@ -60,40 +63,33 @@ app.get("/welcome", async (req, res) => {
 
     ctx.restore();
 
-    // Viền avatar
     ctx.beginPath();
     ctx.arc(180, 250, 105, 0, Math.PI * 2);
     ctx.strokeStyle = "#8DDC65";
     ctx.lineWidth = 5;
     ctx.stroke();
 
-    // ===== LOGO =====
+    // ===== TEXT =====
     ctx.fillStyle = "#8DDC65";
     ctx.font = "bold 58px Sans";
     ctx.fillText("CAPY SHOP", 340, 110);
 
-    // ===== WELCOME =====
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 52px Sans";
     ctx.fillText("WELCOME!", 340, 180);
 
-    // ===== USERNAME =====
     let displayName = username;
-
     if (displayName.length > 24) {
       displayName = displayName.slice(0, 24) + "...";
     }
 
-    ctx.fillStyle = "#ffffff";
     ctx.font = "bold 42px Sans";
     ctx.fillText(displayName, 340, 260);
 
-    // ===== MEMBER COUNT =====
     ctx.fillStyle = "#8DDC65";
     ctx.font = "bold 34px Sans";
     ctx.fillText("Member #" + count, 340, 320);
 
-    // ===== DESCRIPTION =====
     ctx.fillStyle = "#ffffff";
     ctx.font = "26px Sans";
     ctx.fillText(
@@ -102,13 +98,13 @@ app.get("/welcome", async (req, res) => {
       390
     );
 
+    ctx.font = "22px Sans";
     ctx.fillText(
-      "Nhanh Chóng • Uy tín • Chuyên Nghiệp • Thân Thiện",
+      "Nhanh Chong • Uy Tin • Chuyen Nghiep • Than Thien",
       340,
       430
     );
 
-    // ===== FOOTER =====
     ctx.fillStyle = "#8DDC65";
     ctx.font = "20px Sans";
     ctx.fillText(
