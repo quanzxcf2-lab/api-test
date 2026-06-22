@@ -3,7 +3,7 @@ const Canvas = require("@napi-rs/canvas");
 
 const app = express();
 
-// ===== BO GÓC =====
+// ===== BO GÓC CARD =====
 function roundRect(ctx, x, y, width, height, radius) {
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
@@ -37,10 +37,12 @@ app.get("/", (req, res) => {
 
 app.get("/welcome", async (req, res) => {
   try {
+
     const avatarURL = req.query.avatar;
 
-    if (!avatarURL)
+    if (!avatarURL) {
       return res.status(400).send("Missing avatar parameter");
+    }
 
     const username = decodeURIComponent(req.query.username || "Member");
     const count = req.query.count || "0";
@@ -50,53 +52,67 @@ app.get("/welcome", async (req, res) => {
 
     // ===== BACKGROUND =====
     try {
+
       const background = await Canvas.loadImage(
         "https://media.craiyon.com/2025-10-17/z060eYsOSY2hVXSoPImsyA.webp"
       );
 
-      ctx.drawImage(background, 0, 0, 1200, 500);
+      ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+
     } catch {
+
       ctx.fillStyle = "#64584d";
-      ctx.fillRect(0, 0, 1200, 500);
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     }
 
     // Overlay
     ctx.fillStyle = "rgba(0,0,0,0.45)";
-    ctx.fillRect(0, 0, 1200, 500);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // ===== CARD =====
-    ctx.shadowColor = "#8DDC65";
-    ctx.shadowBlur = 25;
-
-    ctx.fillStyle = "rgba(30,31,34,0.90)";
-    roundRect(ctx, 40, 40, 1120, 420, 30);
-    ctx.fill();
-
-    ctx.shadowBlur = 0;
-
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = "#8DDC65";
-    roundRect(ctx, 40, 40, 1120, 420, 30);
-    ctx.stroke();
-
-    // ===== AVATAR =====
-    const avatar = await Canvas.loadImage(avatarURL);
 
     // Glow ngoài
     ctx.shadowColor = "#8DDC65";
     ctx.shadowBlur = 40;
 
+    ctx.fillStyle = "rgba(20,20,20,0.88)";
+    roundRect(ctx, 40, 40, 1120, 420, 35);
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+    // Viền ngoài
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = "#8DDC65";
+    roundRect(ctx, 40, 40, 1120, 420, 35);
+    ctx.stroke();
+
+    // Viền trong
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    roundRect(ctx, 50, 50, 1100, 400, 30);
+    ctx.stroke();
+
+    // ===== AVATAR =====
+
+    const avatar = await Canvas.loadImage(avatarURL);
+
+    // Glow avatar
+    ctx.shadowColor = "#8DDC65";
+    ctx.shadowBlur = 60;
+
     ctx.beginPath();
-    ctx.arc(180, 250, 120, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(141,220,101,0.25)";
+    ctx.arc(180, 250, 125, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(141,220,101,0.20)";
     ctx.fill();
 
     ctx.shadowBlur = 0;
 
     // Viền trắng
     ctx.beginPath();
-    ctx.arc(180, 250, 108, 0, Math.PI * 2);
-    ctx.fillStyle = "#ffffff";
+    ctx.arc(180, 250, 112, 0, Math.PI * 2);
+    ctx.fillStyle = "#FFFFFF";
     ctx.fill();
 
     // Avatar tròn
@@ -113,77 +129,128 @@ app.get("/welcome", async (req, res) => {
     // Viền xanh
     ctx.beginPath();
     ctx.arc(180, 250, 105, 0, Math.PI * 2);
-    ctx.strokeStyle = "#8DDC65";
     ctx.lineWidth = 5;
-    ctx.stroke(); 
+    ctx.strokeStyle = "#8DDC65";
+    ctx.stroke();
 
-// ===== TEXT SHADOW =====
-    ctx.shadowColor = "black";
-    ctx.shadowBlur = 10;
+    // Viền sáng ngoài
+    ctx.beginPath();
+    ctx.arc(180, 250, 115, 0, Math.PI * 2);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(255,255,255,0.3)";
+    ctx.stroke();
+// ===== TEXT =====
 
     // CAPY SHOP
+    ctx.shadowColor = "#8DDC65";
+    ctx.shadowBlur = 20;
+
     ctx.fillStyle = "#8DDC65";
-    ctx.font = "bold 68px Sans";
+    ctx.font = "bold 70px Sans";
     ctx.fillText("CAPY SHOP", 340, 115);
 
+    ctx.shadowBlur = 0;
+
     // WELCOME
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 64px Sans";
+    ctx.shadowColor = "black";
+    ctx.shadowBlur = 15;
+
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "bold 66px Sans";
     ctx.fillText("WELCOME!", 340, 190);
 
-    // Username (auto font size)
-    ctx.fillStyle = "#ffffff";
-    ctx.font = applyText(canvas, username, 760, 52);
+    ctx.shadowBlur = 0;
+
+    // USERNAME
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = applyText(canvas, username, 760, 54);
     ctx.fillText(username, 340, 280);
 
-    // Member Count
+    // MEMBER COUNT
     ctx.fillStyle = "#8DDC65";
     ctx.font = "bold 40px Sans";
     ctx.fillText(`Member #${count}`, 340, 340);
 
-    // Mô tả
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "28px Sans";
+    // ĐƯỜNG KẺ
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(340, 360);
+    ctx.lineTo(1080, 360);
+    ctx.stroke();
+
+    // MÔ TẢ
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "26px Sans";
+
     ctx.fillText(
-      "Cam on ban da tham gia cong dong Capy Shop!",
+      "Cảm ơn bạn đã tham gia cộng đồng CAPY SHOP!",
       340,
       405
     );
 
+    ctx.fillStyle = "#D9D9D9";
     ctx.font = "20px Sans";
-    ctx.fillStyle = "#d9d9d9";
+
     ctx.fillText(
-      "Nhanh Chong • Uy Tin • Chuyen Nghiep • Than Thien",
+      "Nhanh Chóng • Uy Tín • Chuyên Nghiệp • Thân Thiện",
       340,
       440
     );
-
-    // Footer
-    ctx.shadowBlur = 0;
+// ===== FOOTER =====
 
     ctx.fillStyle = "#8DDC65";
     ctx.font = "18px Sans";
+
     ctx.fillText(
       "Created by Capy Shop",
       55,
       485
     );
 
+    // ===== DECORATION =====
+
+    ctx.fillStyle = "rgba(141,220,101,0.4)";
+
+    ctx.beginPath();
+    ctx.arc(1080, 100, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(1040, 130, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(1100, 150, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(980, 80, 2, 0, Math.PI * 2);
+    ctx.fill();
+
     // ===== OUTPUT =====
+
     const buffer = canvas.toBuffer("image/png");
 
     res.setHeader("Content-Type", "image/png");
     res.end(buffer);
 
   } catch (err) {
+
     console.error(err);
+
     res.status(500).send(err.toString());
+
   }
 });
 
-// ===== START SERVER =====
+// ===== SERVER =====
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
+
   console.log(`🦫 Server running on port ${PORT}`);
-});
+
+}); 
