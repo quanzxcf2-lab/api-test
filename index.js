@@ -146,7 +146,7 @@ app.get("/welcome", async (req, res) => {
     try {
 
       const logo = await Canvas.loadImage(
-        "https://i.postimg.cc/Dfjts6q2/Capy-20260605-232214-0000.png"
+        "https://i.postimg.cc/N0Tg3j95/Capy-20260605-232214-0000.png"
       );
 
       // Vòng sáng phía sau logo
